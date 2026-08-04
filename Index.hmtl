@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勉強 · Tiempos de estudio</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF5; --ink:#22261F; --muted:#7A7468; --line:#E7E3D8; --soft:#F0EDE3;
+    --indigo:#2D4B73; --shu:#C0442C;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:0 16px 60px}
+  .shell{max-width:760px;margin:0 auto}
+  header{padding:36px 0 20px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .hanko{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:2px solid var(--shu);border-radius:6px;color:var(--shu);font-family:'Shippori Mincho',serif;font-size:15px;line-height:1.05;text-align:center;transform:rotate(-3deg);user-select:none}
+  h1{font-family:'Shippori Mincho',Georgia,serif;font-size:30px;font-weight:600;margin:0}
+  .sub{color:var(--muted);font-size:14px;margin:0;flex-basis:100%}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:18px}
+  h2{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  h2 small{font-family:'IBM Plex Sans',sans-serif;font-weight:400;color:var(--muted);font-size:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip{border:1.5px solid #D8D3C6;background:#fff;color:#4A463D;border-radius:999px;padding:7px 13px;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+  .chip .k{font-family:'Shippori Mincho',serif;font-size:12px;opacity:.85}
+  .chip.active{color:#fff}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  input[type=date],input[type=number]{border:1px solid #D8D3C6;border-radius:8px;padding:9px 11px;font-size:15px;background:var(--paper);color:var(--ink);font-family:inherit}
+  input[type=number]{width:110px}
+  .primary{background:var(--indigo);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:15px;font-weight:600;cursor:pointer}
+  .primary:disabled{background:#C9C4B7;cursor:default}
+  .quick{border:1px solid #D8D3C6;background:#fff;border-radius:6px;padding:5px 10px;font-size:13px;cursor:pointer;color:#4A463D;font-family:inherit}
+  .quicks{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .stats{display:flex;gap:24px;flex-wrap:wrap}
+  .num{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:600;line-height:1}
+  .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+  .seg{background:var(--soft);border-radius:8px;padding:3px;display:flex;gap:2px}
+  .seg button{border:none;background:transparent;color:var(--muted);border-radius:6px;padding:5px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  .seg button.active{background:var(--ink);color:var(--paper)}
+  .flexbetween{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  .chart{display:flex;align-items:flex-end;gap:3px;height:220px;margin-top:14px}
+  .colwrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+  .col{display:flex;flex-direction:column-reverse;justify-content:flex-start;height:100%;gap:1px}
+  .colseg{border-radius:2px}
+  .xlab{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12px;color:#4A463D}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .wrow{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13.5px}
+  .wlab{width:36px;color:#4A463D}
+  .wbar{flex:1;height:16px;background:var(--soft);border-radius:4px;overflow:hidden}
+  .wfill{height:100%;background:var(--indigo);border-radius:4px}
+  .wval{width:64px;text-align:right;color:var(--muted);font-size:12.5px}
+  .hm-scroll{overflow-x:auto;padding-bottom:6px}
+  .hm{display:flex;gap:2px}
+  .hm-col{display:flex;flex-direction:column;gap:2px}
+  .hm-cell{width:11px;height:11px;border-radius:2px;background:var(--soft);flex:none}
+  .hm-months{display:flex;font-size:10px;color:var(--muted);margin-bottom:4px}
+  .hm-months span{width:13px;flex:none;overflow:visible;white-space:nowrap}
+  .hm-legend{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);margin-top:8px}
+  .crow{margin-bottom:10px}
+  .chead{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:3px}
+  .cbar{height:8px;background:var(--soft);border-radius:4px}
+  .cfill{height:8px;border-radius:4px}
+  .entry{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--soft);font-size:14px}
+  .entry .d{width:46px;color:var(--muted)}
+  .entry .n{flex:1}
+  .entry .m{font-weight:600}
+  .del{border:none;background:transparent;color:#B0AA9C;cursor:pointer;font-size:15px;padding:4px}
+  .linkbtn{border:none;background:transparent;text-decoration:underline;font-size:13px;cursor:pointer;color:#4A463D;font-family:inherit}
+  .empty{color:var(--muted);font-size:14px}
+  .backup{display:flex;gap:10px;flex-wrap:wrap}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <span class="hanko">勉<br>強</span>
+    <h1>Tiempos de estudio</h1>
+    <p class="sub">Registra tus sesiones de japonés y descubre tus patrones. Los datos se guardan solo en este navegador.</p>
+  </header>
+
+  <section class="card">
+    <h2>Registrar sesión</h2>
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <input type="date" id="date">
+      <input type="number" id="minutes" min="1" placeholder="Minutos">
+      <button class="primary" id="addBtn" disabled>Guardar sesión</button>
+    </div>
+    <div class="quicks" id="quicks"></div>
+  </section>
+
+  <section class="card stats" id="stats"></section>
+
+  <section class="card">
+    <div class="flexbetween">
+      <h2 style="margin:0">Minutos por día</h2>
+      <div class="seg" id="rangeSeg"></div>
+    </div>
+    <div id="dailyChart"></div>
+  </section>
+
+  <section class="card">
+    <h2>Patrón semanal <small>— promedio por día de la semana</small></h2>
+    <div id="weeklyChart"></div>
+  </section>
+
+  <section class="card">
+    <h2>Vista anual <small>— últimos 12 meses</small></h2>
+    <div id="yearStats" class="stats" style="margin-bottom:14px"></div>
+    <div id="heatmap"></div>
+  </section>
+
+  <section class="card">
+    <h2>Totales por mes</h2>
+    <div id="monthlyChart"></div>
+  </section>
+
+  <section class="card" id="catCard" style="display:none">
+    <h2>Por categoría <small id="catRangeLbl"></small></h2>
+    <div id="catChart"></div>
+  </section>
+
+  <section class="card">
+    <div class="flexbetween">
+      <h2 style="margin:0">Sesiones recientes</h2>
+      <button class="linkbtn" id="toggleLog">Mostrar</button>
+    </div>
+    <div id="log" style="display:none;margin-top:12px"></div>
+  </section>
+
+  <section class="card">
+    <h2>Respaldo</h2>
+    <div class="backup">
+      <button class="quick" id="exportBtn">Exportar datos (JSON)</button>
+      <button class="quick" id="importBtn">Importar respaldo</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+    <p class="empty" style="margin:10px 0 0">Los datos viven en localStorage de este navegador. Exporta un respaldo de vez en cuando por si limpias los datos de navegación.</p>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const KEY = "registro-estudio-jp";
+const CATS = [
+  { id:"kanji",     label:"Kanji",       kanji:"漢字", color:"#C0442C" },
+  { id:"vocab",     label:"Vocabulario", kanji:"語彙", color:"#2D4B73" },
+  { id:"podcast",   label:"Podcast",     kanji:"聴解", color:"#3E6B4F" },
+  { id:"gramatica", label:"Gramática",   kanji:"文法", color:"#B07B2E" },
+  { id:"lectura",   label:"Lectura",     kanji:"読解", color:"#6B4F8A" },
+  { id:"otro",      label:"Otro",        kanji:"他",   color:"#7A7468" }
+];
+const catById = Object.fromEntries(CATS.map(c=>[c.id,c]));
+const DOW_ORDER = [1,2,3,4,5,6,0];
+const DOW_LAB = {0:"Dom",1:"Lun",2:"Mar",3:"Mié",4:"Jue",5:"Vie",6:"Sáb"};
+
+let entries = [];
+let cat = "kanji";
+let range = 14;
+let showLog = false;
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const data = JSON.parse(raw);
+      if(Array.isArray(data.entries)) entries = data.entries;
+    }
+  }catch(e){ console.error("No se pudo leer localStorage", e); }
+}
+function save(){
+  try{
+    localStorage.setItem(KEY, JSON.stringify({entries}));
+  }catch(e){
+    toast("No se pudo guardar en este navegador");
+  }
+}
+
+const pad = n => String(n).padStart(2,"0");
+function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function parseDate(s){ const p=s.split("-").map(Number); return new Date(p[0],p[1]-1,p[2]); }
+function dkey(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function fmtShort(s){ const d=parseDate(s); return d.getDate()+"/"+(d.getMonth()+1); }
+function fmtMin(m){ if(m>=60){ const h=Math.floor(m/60), r=m%60; return r? h+"h "+r+"m" : h+"h"; } return m+"m"; }
+function toast(msg){
+  const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2200);
+}
+
+function rangeDays(){
+  const days=[]; const now=parseDate(todayStr());
+  for(let i=range-1;i>=0;i--){ const d=new Date(now); d.setDate(d.getDate()-i); days.push(dkey(d)); }
+  return days;
+}
+function streak(){
+  const has=new Set(entries.map(e=>e.date));
+  let s=0; const d=parseDate(todayStr());
+  if(!has.has(dkey(d))) d.setDate(d.getDate()-1);
+  while(has.has(dkey(d))){ s++; d.setDate(d.getDate()-1); }
+  return s;
+}
+
+function renderChips(){
+  const el=document.getElementById("chips"); el.innerHTML="";
+  CATS.forEach(c=>{
+    const b=document.createElement("button");
+    b.className="chip"+(cat===c.id?" active":"");
+    if(cat===c.id){ b.style.background=c.color; b.style.borderColor=c.color; }
+    b.innerHTML='<span class="k">'+c.kanji+'</span> '+c.label;
+    b.onclick=()=>{ cat=c.id; renderChips(); };
+    el.appendChild(b);
+  });
+}
+function renderQuicks(){
+  const el=document.getElementById("quicks");
+  [10,15,20,30,45,60].forEach(m=>{
+    const b=document.createElement("button"); b.className="quick"; b.textContent=m+" min";
+    b.onclick=()=>{ document.getElementById("minutes").value=m; validate(); };
+    el.appendChild(b);
+  });
+}
+function renderStats(){
+  const days=rangeDays();
+  const inRange=entries.filter(e=>days.includes(e.date));
+  const total=inRange.reduce((a,e)=>a+e.min,0);
+  const el=document.getElementById("stats");
+  el.innerHTML=
+    '<div><div class="num">'+fmtMin(total)+'</div><div class="lbl">últimos '+range+' días</div></div>'+
+    '<div><div class="num">'+(total? fmtMin(Math.round(total/range)) : "0m")+'</div><div class="lbl">promedio diario</div></div>'+
+    '<div><div class="num" style="'+(streak()>0?'color:#C0442C':'')+'">'+streak()+'</div><div class="lbl">días seguidos</div></div>';
+}
+function renderRangeSeg(){
+  const el=document.getElementById("rangeSeg"); el.innerHTML="";
+  [7,14,30].forEach(r=>{
+    const b=document.createElement("button");
+    b.textContent=r+"d"; if(r===range) b.className="active";
+    b.onclick=()=>{ range=r; renderAll(); };
+    el.appendChild(b);
+  });
+}
+function renderDaily(){
+  const el=document.getElementById("dailyChart");
+  if(entries.length===0){ el.innerHTML='<p class="empty">Registra tu primera sesión para ver el gráfico.</p>'; return; }
+  const days=rangeDays();
+  const data=days.map(day=>{
+    const per={}; let total=0;
+    CATS.forEach(c=>{
+      const s=entries.filter(e=>e.date===day&&e.cat===c.id).reduce((a,e)=>a+e.min,0);
+      if(s>0) per[c.id]=s; total+=s;
+    });
+    return {day:day,per:per,total:total};
+  });
+  const max=Math.max.apply(null,data.map(d=>d.total).concat([30]));
+  const labelEvery = range>14 ? 3 : (range>7 ? 2 : 1);
+  let html='<div class="chart">';
+  data.forEach((d,i)=>{
+    let segs="";
+    CATS.forEach(c=>{
+      if(d.per[c.id]){
+        const h=(d.per[c.id]/max)*100;
+        segs+='<div class="colseg" style="height:'+h+'%;background:'+c.color+'" title="'+fmtShort(d.day)+' · '+c.label+': '+fmtMin(d.per[c.id])+'"></div>';
+      }
+    });
+    html+='<div class="colwrap"><div class="col" title="'+fmtShort(d.day)+': '+fmtMin(d.total)+'">'+segs+'</div><div class="xlab">'+(i%labelEvery===0?fmtShort(d.day):"")+'</div></div>';
+  });
+  html+='</div><div class="legend">'+CATS.map(c=>'<span><span class="dot" style="background:'+c.color+'"></span>'+c.label+'</span>').join("")+'</div>';
+  el.innerHTML=html;
+}
+function renderWeekly(){
+  const el=document.getElementById("weeklyChart");
+  if(entries.length===0){ el.innerHTML='<p class="empty">Aquí verás qué días de la semana estudias más.</p>'; return; }
+  const sorted=entries.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const first=parseDate(sorted[0].date), last=parseDate(todayStr());
+  const sums=[0,0,0,0,0,0,0], counts=[0,0,0,0,0,0,0];
+  for(let d=new Date(first); d<=last; d.setDate(d.getDate()+1)) counts[d.getDay()]++;
+  entries.forEach(e=>{ sums[parseDate(e.date).getDay()]+=e.min; });
+  const avgs=DOW_ORDER.map(i=>({lab:DOW_LAB[i], avg:counts[i]?Math.round(sums[i]/counts[i]):0}));
+  const max=Math.max.apply(null,avgs.map(a=>a.avg).concat([1]));
+  el.innerHTML=avgs.map(a=>
+    '<div class="wrow">'+
+      '<span class="wlab">'+a.lab+'</span>'+
+      '<div class="wbar"><div class="wfill" style="width:'+(a.avg/max)*100+'%"></div></div>'+
+      '<span class="wval">'+fmtMin(a.avg)+'</span>'+
+    '</div>').join("");
+}
+function renderCats(){
+  const card=document.getElementById("catCard");
+  const days=rangeDays();
+  const inRange=entries.filter(e=>days.includes(e.date));
+  const total=inRange.reduce((a,e)=>a+e.min,0);
+  if(total===0){ card.style.display="none"; return; }
+  card.style.display="";
+  document.getElementById("catRangeLbl").textContent="— últimos "+range+" días";
+  const rows=CATS.map(c=>Object.assign({},c,{min:inRange.filter(e=>e.cat===c.id).reduce((a,e)=>a+e.min,0)}))
+    .filter(r=>r.min>0).sort((a,b)=>b.min-a.min);
+  document.getElementById("catChart").innerHTML=rows.map(r=>
+    '<div class="crow">'+
+      '<div class="chead">'+
+        '<span><span style="font-family:\'Shippori Mincho\',serif;font-size:12px;color:'+r.color+'">'+r.kanji+'</span> '+r.label+'</span>'+
+        '<span style="color:var(--muted)">'+fmtMin(r.min)+' · '+Math.round(r.min/total*100)+'%</span>'+
+      '</div>'+
+      '<div class="cbar"><div class="cfill" style="width:'+(r.min/total*100)+'%;background:'+r.color+'"></div></div>'+
+    '</div>').join("");
+}
+function renderLog(){
+  const el=document.getElementById("log");
+  const btn=document.getElementById("toggleLog");
+  btn.textContent = showLog ? "Ocultar" : "Mostrar ("+entries.length+")";
+  el.style.display = showLog ? "" : "none";
+  if(!showLog) return;
+  const recent=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))).slice(0,50);
+  el.innerHTML = recent.length===0 ? '<p class="empty">Sin sesiones todavía.</p>' :
+    recent.map(e=>
+      '<div class="entry">'+
+        '<span class="d">'+fmtShort(e.date)+'</span>'+
+        '<span class="dot" style="background:'+((catById[e.cat]||{}).color||'#999')+'"></span>'+
+        '<span class="n">'+((catById[e.cat]||{}).label||e.cat)+'</span>'+
+        '<span class="m">'+fmtMin(e.min)+'</span>'+
+        '<button class="del" title="Eliminar" data-id="'+e.id+'">✕</button>'+
+      '</div>').join("");
+  el.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
+    entries=entries.filter(x=>String(x.id)!==b.dataset.id);
+    save(); renderAll();
+  });
+}
+const MESES=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+function hmColor(min){
+  if(min<=0) return "var(--soft)";
+  if(min<15) return "#C9D4E4";
+  if(min<30) return "#8FA6C4";
+  if(min<60) return "#5A7699";
+  return "#2D4B73";
+}
+function renderHeatmap(){
+  const el=document.getElementById("heatmap");
+  const stats=document.getElementById("yearStats");
+  const byDay={};
+  entries.forEach(e=>{ byDay[e.date]=(byDay[e.date]||0)+e.min; });
+  const today=parseDate(todayStr());
+  const yearAgo=new Date(today); yearAgo.setDate(yearAgo.getDate()-364);
+  // stats del año
+  let yTotal=0, yDays=0;
+  for(const k in byDay){
+    const d=parseDate(k);
+    if(d>=yearAgo && d<=today){ yTotal+=byDay[k]; yDays++; }
+  }
+  stats.innerHTML=
+    '<div><div class="num">'+fmtMin(yTotal)+'</div><div class="lbl">total 12 meses</div></div>'+
+    '<div><div class="num">'+yDays+'</div><div class="lbl">días con estudio</div></div>'+
+    '<div><div class="num">'+(yDays? fmtMin(Math.round(yTotal/yDays)) : "0m")+'</div><div class="lbl">promedio por día activo</div></div>';
+  // rejilla: columnas = semanas (Lun..Dom), desde el lunes de hace 52 semanas
+  const start=new Date(yearAgo);
+  start.setDate(start.getDate()-((start.getDay()+6)%7));
+  let cols="", monthsRow="", prevMonth=-1;
+  for(let w=new Date(start); w<=today; w.setDate(w.getDate()+7)){
+    const m=w.getMonth();
+    monthsRow+='<span>'+(m!==prevMonth? MESES[m] : "")+'</span>';
+    prevMonth=m;
+    let cells="";
+    for(let i=0;i<7;i++){
+      const d=new Date(w); d.setDate(d.getDate()+i);
+      if(d>today || d<yearAgo){ cells+='<div class="hm-cell" style="visibility:hidden"></div>'; continue; }
+      const k=dkey(d), min=byDay[k]||0;
+      cells+='<div class="hm-cell" style="background:'+hmColor(min)+'" title="'+fmtShort(k)+': '+(min? fmtMin(min) : "sin estudio")+'"></div>';
+    }
+    cols+='<div class="hm-col">'+cells+'</div>';
+  }
+  el.innerHTML=
+    '<div class="hm-scroll"><div class="hm-months">'+monthsRow+'</div><div class="hm">'+cols+'</div></div>'+
+    '<div class="hm-legend">Menos '+[0,10,20,45,70].map(v=>'<span class="hm-cell" style="display:inline-block;background:'+hmColor(v)+'"></span>').join("")+' Más</div>';
+  // desplazar al final (semanas recientes) en pantallas angostas
+  const sc=el.querySelector(".hm-scroll");
+  if(sc) sc.scrollLeft=sc.scrollWidth;
+}
+function renderMonthly(){
+  const el=document.getElementById("monthlyChart");
+  if(entries.length===0){ el.innerHTML='<p class="empty">Aquí verás cuánto acumulas cada mes.</p>'; return; }
+  const today=parseDate(todayStr());
+  const rows=[];
+  for(let i=11;i>=0;i--){
+    const d=new Date(today.getFullYear(), today.getMonth()-i, 1);
+    const key=d.getFullYear()+"-"+pad(d.getMonth()+1);
+    const min=entries.filter(e=>e.date.indexOf(key)===0).reduce((a,e)=>a+e.min,0);
+    const lab=MESES[d.getMonth()]+((d.getMonth()===0||i===11)? " '"+String(d.getFullYear()).slice(2) : "");
+    rows.push({lab:lab, min:min});
+  }
+  const max=Math.max.apply(null,rows.map(r=>r.min).concat([1]));
+  el.innerHTML=rows.map(r=>
+    '<div class="wrow">'+
+      '<span class="wlab" style="width:52px">'+r.lab+'</span>'+
+      '<div class="wbar"><div class="wfill" style="width:'+(r.min/max)*100+'%"></div></div>'+
+      '<span class="wval">'+(r.min? fmtMin(r.min) : "—")+'</span>'+
+    '</div>').join("");
+}
+function renderAll(){
+  renderStats(); renderRangeSeg(); renderDaily(); renderWeekly(); renderHeatmap(); renderMonthly(); renderCats(); renderLog();
+}
+
+function validate(){
+  const min=parseInt(document.getElementById("minutes").value,10);
+  const date=document.getElementById("date").value;
+  document.getElementById("addBtn").disabled = !(min>0 && date);
+}
+function addEntry(){
+  const min=parseInt(document.getElementById("minutes").value,10);
+  const date=document.getElementById("date").value;
+  if(!(min>0)||!date) return;
+  entries.push({ id: Date.now()+"-"+Math.random().toString(36).slice(2,6), date:date, cat:cat, min:min });
+  entries.sort((a,b)=>a.date.localeCompare(b.date));
+  save();
+  document.getElementById("minutes").value="";
+  validate();
+  toast("Guardado: "+catById[cat].label+", "+fmtMin(min));
+  renderAll();
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify({app:"tiempos-estudio-jp",exportado:new Date().toISOString(),entries:entries},null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="estudio-japones-"+todayStr()+".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importData(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      const list=Array.isArray(data)?data:data.entries;
+      if(!Array.isArray(list)) throw new Error("formato");
+      const clean=list.filter(e=>e&&e.date&&e.cat&&e.min>0)
+        .map(e=>({id:e.id||Date.now()+"-"+Math.random().toString(36).slice(2,6),date:e.date,cat:e.cat,min:parseInt(e.min,10)}));
+      const have=new Set(entries.map(e=>String(e.id)));
+      let added=0;
+      clean.forEach(e=>{ if(!have.has(String(e.id))){ entries.push(e); added++; } });
+      entries.sort((a,b)=>a.date.localeCompare(b.date));
+      save(); renderAll();
+      toast(added? "Importadas "+added+" sesiones" : "Nada nuevo que importar");
+    }catch(err){
+      toast("El archivo no tiene el formato esperado");
+    }
+  };
+  r.readAsText(file);
+}
+
+load();
+document.getElementById("date").value=todayStr();
+document.getElementById("date").max=todayStr();
+document.getElementById("date").addEventListener("input",validate);
+document.getElementById("minutes").addEventListener("input",validate);
+document.getElementById("minutes").addEventListener("keydown",e=>{ if(e.key==="Enter") addEntry(); });
+document.getElementById("addBtn").addEventListener("click",addEntry);
+document.getElementById("toggleLog").addEventListener("click",()=>{ showLog=!showLog; renderLog(); });
+document.getElementById("exportBtn").addEventListener("click",exportData);
+document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",e=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=""; });
+renderChips(); renderQuicks(); renderAll();
+</script>
+</body>
+</html>
