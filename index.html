@@ -3,10 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
 <title>勉強 · Tiempos de estudio</title>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=IBM+Plex+Sans:wght@400;600&display=swap" media="print" onload="this.media='all'">
 <style>
   :root{
+    color-scheme: only light;
     --paper:#FBFAF5; --ink:#22261F; --muted:#7A7468; --line:#E7E3D8; --soft:#F0EDE3;
     --indigo:#2D4B73; --shu:#C0442C;
   }
@@ -38,9 +42,9 @@
   .seg button{border:none;background:transparent;color:var(--muted);border-radius:6px;padding:5px 10px;font-size:13px;cursor:pointer;font-family:inherit}
   .seg button.active{background:var(--ink);color:var(--paper)}
   .flexbetween{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-  .chart{display:flex;align-items:flex-end;gap:3px;height:220px;margin-top:14px}
-  .colwrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
-  .col{display:flex;flex-direction:column-reverse;justify-content:flex-start;height:100%;gap:1px}
+  .chart{display:flex;gap:3px;margin-top:14px}
+  .colwrap{flex:1;min-width:0}
+  .col{display:flex;flex-direction:column-reverse;justify-content:flex-start;height:190px;gap:1px}
   .colseg{border-radius:2px}
   .xlab{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden}
   .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12px;color:#4A463D}
@@ -263,8 +267,8 @@ function renderDaily(){
     let segs="";
     CATS.forEach(c=>{
       if(d.per[c.id]){
-        const h=(d.per[c.id]/max)*100;
-        segs+='<div class="colseg" style="height:'+h+'%;background:'+c.color+'" title="'+fmtShort(d.day)+' · '+c.label+': '+fmtMin(d.per[c.id])+'"></div>';
+        const h=Math.max(3, Math.round((d.per[c.id]/max)*188));
+        segs+='<div class="colseg" style="height:'+h+'px;background:'+c.color+'" title="'+fmtShort(d.day)+' · '+c.label+': '+fmtMin(d.per[c.id])+'"></div>';
       }
     });
     html+='<div class="colwrap"><div class="col" title="'+fmtShort(d.day)+': '+fmtMin(d.total)+'">'+segs+'</div><div class="xlab">'+(i%labelEvery===0?fmtShort(d.day):"")+'</div></div>';
